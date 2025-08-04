@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Powered Global Ocean Health Monitoring System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #0a0f1c;
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: #101928;
+            border-radius: 32px;
+            box-shadow: 0 0 40px #00d1ff22;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            grid-template-rows: 120px 1fr 1fr;
+            gap: 24px;
+        }
+        .header {
+            grid-column: 1 / 4;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .header-logo {
+            width: 207px;
+            height: 162px;
+            border-radius: 50%;
+            background: #011223;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom:12px;
+        }
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            color: #66e2ff;
+        }
+        .header-title p {
+            font-size: 1rem;
+            color: #00d1ff;
+            margin: 4px 0 0 0;
+            letter-spacing: 2px;
+        }
+        .card {
+            background: #0d1321;
+            border-radius: 24px;
+            box-shadow: 0 0 16px #00d1ff11;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #66e2ff;
+            margin-bottom: 8px;
+        }
+        .metrics {
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .globe {
+            grid-row: 2 / 4;
+            grid-column: 2 / 3;
+            background: radial-gradient(circle at center, #011223 60%, #000);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .globe-img {
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 40px #00d1ff44;
+        }
+        .globe-label {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #00d1ff;
+            color: #011223;
+            padding: 6px 18px;
+            border-radius: 16px;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+        .health-metrics {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .metric-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #101928;
+            border: 4px solid #00d1ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff7c43;
+        }
+        .background-gif {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            z-index: 1;
+        }
+        .metric-circle.s5 {
+            border-color: #00d1ff;
+            color: #00d1ff;
+        }
+        .explain-bar {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #00d1ff 60%, #ff7c43 100%);
+            margin-bottom: 8px;
+        }
+        .alert {
+            background: #1e293b;
+            color: #ff7c43;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-container {
+            background: #101928;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+        .chart-title {
+            color: #66e2ff;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        .feature-label {
+            font-size: 0.95rem;
+            color: #7ce2ff;
+            margin-bottom: 2px;
+        }
+        video.background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100vw;
+            min-height: 100vh;
+            width: auto;
+            height: auto;
+            z-index: 1;
+            object-fit: cover;
+            opacity: 0.25; /* Adjust for visibility */
+        }
+        /* Add to your <style> section */
+        .footer-center {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            left: 0;
+            bottom: 24px; /* Adjust as needed */
+            z-index: 10;
+            background: transparent;
+            border: none;
+            position: relative;
+        }
+        button.globe-label {
+            background: #00d1ff;
+            color: #011223;
+            padding: 6px 18px;
+            border-radius: 16px;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border: none;
+            margin-top:24px;
+            margin-bottom: 10px;
+        }
+        button.globe-label:hover {
+            background: #0074d9;
+            z-index: 2;
+        }
+        button.ocean-ai-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            bottom: 215px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 188px;
+            z-index: 2;
+        }
+        button.ocean-ai-button:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 0 20px #00d1ff44;
+        }
+
+    </style>
+</head>
+<body>
+    <video autoplay loop muted playsinline class="background-video">
+        <source src="oceans.mp4" type="video/mp4">
+        <!-- Optional: fallback text -->
+        Your browser does not support the video tag.
+    </video>
+    <div class="background-gif"></div>
+    <div class="container">
+        <div class="header">
+            <!-- <div class="header-logo"> -->
+                <!-- <img src="images.jpg" alt="NASA Logo" style="width:153px;height:147px;border-radius:50%;"> -->
+            <!-- </div> -->
+            <div class="header-title">
+                <h1>AI-POWERED GLOBAL OCEAN HEALTH MONITORING SYSTEM</h1>
+                <p>DEVELOPED BY SHUBHAYAN</p>
+            </div>
+        </div>
+        <div class="card" style="grid-row:2/3;grid-column:1/2;">
+            <div class="card-title">SATELLITE DATA FEED</div>
+            <div class="metrics">
+                <div>SST <span style="float:right;">21,5°C</span></div>
+                <div>Salinity <span style="float:right;">35,2</span></div>
+                <div>Chlorophy II <span style="float:right;">0,7</span></div>
+            </div>
+        </div>
+        <div class="card chart-container" style="grid-row:3/4;grid-column:1/2;">
+            <div class="chart-title">SST OVER TIME</div>
+            <canvas id="chart1"></canvas>
+        </div>
+        <div class="globe">
+            <span class="globe-label">AI A1</span>
+            <button class="ocean-ai-button" id="ocean-ai-button"><img src="oceanai.jpeg" alt="Globe" class="globe-img"></button>
+        </div>
+        <div class="card" style="grid-row:2/3;grid-column:3/4;">
+            <div class="card-title">Ocean Health Metrics</div>
+            <div class="health-metrics">
+                <div class="metric-circle">62</div>
+                <div class="metric-circle s5">74</div>
+                <div style="color:#7ce2ff;font-size:1.1rem;">S5</div>
+            </div>
+            <div style="font-size:0.9rem;color:#7ce2ff;">AI powered analysis of data</div>
+        </div>
+        <div class="card" style="grid-row:3/4;grid-column:3/4;">
+            <div class="card-title">Explainability</div>
+            <div style="font-size:0.95rem;color:#7ce2ff;margin-bottom:8px;">Feature importance (SHAP)</div>
+            <div class="feature-label">Salinity</div>
+            <div class="explain-bar" style="width:90%;background:linear-gradient(90deg,#00d1ff 80%,#ff7c43 100%);"></div>
+            <div class="feature-label">SST</div>
+            <div class="explain-bar" style="width:70%;background:linear-gradient(90deg,#00d1ff 60%,#ff7c43 100%);"></div>
+            <div class="feature-label">Ocean Color</div>
+            <div class="explain-bar" style="width:50%;background:linear-gradient(90deg,#00d1ff 40%,#ff7c43 100%);"></div>
+            <div class="feature-label">Wind Speed</div>
+            <div class="explain-bar" style="width:30%;background:linear-gradient(90deg,#00d1ff 20%,#ff7c43 100%);"></div>
+        </div>
+        <div class="card alert" style="grid-row:4/5;grid-column:1/2;">
+            <span>🚨</span> Farh SST Alert
+        </div>
+        <div class="card alert" style="grid-row:4/5;grid-column:3/4;">
+            <span>⚠️</span> High SST Alert<br>
+            <span style="font-size:0.95rem;color:#fff;">Sea Surface &gt; 21,5°C detected</span>
+        </div>
+        <div class="card chart-container" style="grid-row:4/5;grid-column:2/3;">
+            <div class="chart-title">SST OVER TIME</div>
+            <canvas id="chart2"></canvas>
+        </div>
+    </div>
+    <script>
+        document.getElementById('ocean-ai-button').onclick = function() {
+            fetch('/recognize')
+                .then(response => response.json())
+                .then(data => console.log(data));
+        };
+        // Chart 1
+        new Chart(document.getElementById('chart1'), {
+            type: 'line',
+            data: {
+                labels: ["2021", "2022", "2023", "2024", "2025"],
+                datasets: [{
+                    label: 'SST',
+                    data: [6, 9, 17, 19, 21],
+                    borderColor: '#00d1ff',
+                    backgroundColor: '#00d1ff22',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#7ce2ff' }, grid: { display: false } },
+                    y: { ticks: { color: '#7ce2ff' }, grid: { color: '#1e293b' } }
+                }
+            }
+        });
+        // Chart 2
+        new Chart(document.getElementById('chart2'), {
+            type: 'line',
+            data: {
+                labels: ["2001", "2003", "2005", "2007", "2009"],
+                datasets: [{
+                    label: 'SST',
+                    data: [18, 18.5, 19, 20, 21],
+                    borderColor: '#00d1ff',
+                    backgroundColor: '#00d1ff22',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#7ce2ff' }, grid: { display: false } },
+                    y: { ticks: { color: '#7ce2ff' }, grid: { color: '#1e293b' } }
+                }
+            }
+        });
+    </script>
+    <footer class="footer-center">
+        <p style="font-size: 0.9rem; color: #7ce2ff;">Powered by RealtimeData • Realtime Global Ocean Ecosystem Monitoring</p>
+        <button class="globe-label" onclick="window.open('UX_design_dashboard.html', '_blank') ">Global Ocean Health detailed analysis</button>
+    </footer>
+</body>
+</html>
